@@ -1,0 +1,36 @@
+<nav aria-label="Page navigation" style="float: left; margin-right: 20px;">
+    <ul n:class="pagination, isset($class) ? $class">
+        
+        <li class="disabled"><a href="#">Strana:</a></li>
+        <li n:if="!$paginator->isFirst()" class="pagination-direction pagination-direction-previous">
+            <a href="{plink $link, $paginator->page-1}" aria-label="Previous">
+                <span aria-hidden="true" class="hidden-xs">předchozí</span>
+            </a>
+        </li>
+
+        {if $paginator->isFirst()}		
+            {var $start_page = 1}
+        {elseif $paginator->isLast()}	
+            {var $start_page = $paginator->getPage() > 5 ? $paginator->getPage() - 5 : 1}
+        {else}							
+            {var $start_page = $paginator->getPage() - 2}
+        {/if}
+
+        {var $end_page = ($start_page+5) > $paginator->getPageCount() ? $paginator->getPageCount() : ($start_page+5)}
+
+        {for $i = $start_page; $i <= $end_page; $i++}
+            {if $i == $paginator->getPage()}	
+                <li class="active"><span>{$i}</span></li>
+            {elseif $i != 0}
+                <li><a href="{plink $link, $i}">{$i}</a></li>
+            {/if}
+        {/for}
+
+        <li n:if="!$paginator->isLast()" class="pagination-direction pagination-direction-next">
+            <a href="{plink $link, $paginator->page+1}" aria-label="Next">
+                <span aria-hidden="true" class="hidden-xs">další</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>

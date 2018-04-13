@@ -1,0 +1,100 @@
+<div n:snippet="area" class="well">
+    {form searchForm}
+        <table class="table no-margin">
+            <thead>
+            <tr>
+                <th n:foreach="$_items as $key => $option" n:if="!in_array($key,$hide)">
+                    {$option['name']}
+                    {include sortable,'by'=> isset($option['related']) ? ':'.$key.'.'.$_name.'_id' : $key,'order'=>$order}
+                    <a n:href="hideCol!, $key" class="ajax text-muted"><i class="fas fa-eye-slash"></i></a>
+                </th>
+                <th class="text-center">
+                    Akce
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="search-row">
+                {var $inputs = $form->getComponents()}
+                {php unset($inputs['search'],$inputs['cancel'],$inputs['_do'])}
+                <td n:foreach="$_items as $name => $option" n:if="!in_array($name,$hide)">
+                    {if isset($inputs[$name]) && empty($option['related'])}
+                        {var $input = $inputs[$name]}
+                        {switch $input->getControl()->getAttribute('type')}
+                            {case 'date'}
+                            <table class="sub-table">
+                                <tr>
+                                    <td>{input $name}</td>
+                                    <td><a href="#" class="text-muted" data-collapse="date-to-collapse-{$iterator->getCounter()}"><i class="fa fa-retweet"></i></a></td>
+                                </tr>
+                                <tr class="collapse date-to-collapse-{$iterator->getCounter()}">
+                                    <td>{input $name.'_to'}</td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                            {php unset($inputs[$name.'_to'])}
+                            {default}{input $name}
+                        {/switch}
+                    {/if}
+                </td>
+                <td class="text-center td-action">{input search} {input cancel}</td>
+            </tr>
+            {include defaultItemList}
+            <tr n:if="isset($options['create']) && $options['create']">
+                <td colspan="{count($_items)+1}" class="text-center"> <a href="{plink ':'.$link.':detail'}"><i class="fas fa-plus-circle"></i>&nbsp; Vytvořit</a></td>
+            </tr>
+            </tbody>
+        </table>
+    {/form}
+</div>
+{snippetArea}
+    {include 'pagination.latte', 'paginator' => $paginator, 'link' => ':'.$parent_name.':default'}
+    {include 'perpage.latte', 'pp' => $pp}
+    {include 'hide.latte', 'hide'=>$hide}
+{/snippetArea}
+
+{define sortable}
+    {var $desc = $by.' DESC'}
+    {var $asc = $by.' ASC'}
+    {if $order!=$desc}
+        <a n:href="setOrder!,$desc" n:class="ajax,sortable-href,$asc==$order?active:text-muted">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    {else}
+        <a n:href="setOrder!,$asc" n:class="ajax,sortable-href,$desc==$order?active:text-muted">
+            <i class="fa fa-chevron-down"></i>
+        </a>
+    {/if}
+{/define}
+
+{define defaultItemList}
+    <tr n:foreach="$items as $item_key => $item">
+        <td n:foreach="$_items as $key => $option" n:class="isset($option['related']) ? text-center" n:if="!in_array($key,$hide)">
+            {if (!empty($option['link']))}
+                <a href="{plink ':'.$link.':detail', $item->$_key}">{$item->$key}{if $key == 'id'}#{/if}</a>
+            {elseif (!empty($option['related']))}
+                <span class="badge">
+                {switch $option['related']}
+                    {case 'count'}{$item->related($key)->count()}
+                    {default}{$item->related($key)}
+                {/switch}
+                </span>
+            {elseif (!empty($option['join']))}
+                {var $join = $option['join']}
+                {$item->$join->$key}
+            {else}
+                {switch $option['input']}
+                    {case 'date'}{$item->$key->format('d.m.Y')}
+                    {default}{$item->$key}
+                {/switch}
+            {/if}
+        </td>
+        <td class="text-center">
+            <a href="{plink ':'.$link.':detail', $item->$_key}"> <i class="fa fa-eye"></i></a>
+            &nbsp;
+            <a href="{link deleteItem!, $item->$_key}" class="ajax" data-confirm="Určitě smazat položku?"> <i class="fa fa-trash"></i></a>
+        </td>
+    </tr>
+{/define}
+
+

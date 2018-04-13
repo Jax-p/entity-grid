@@ -1,0 +1,20 @@
+<div n:snippet="area" class="well">
+    {form detailForm}
+        {var $inputs = $form->getComponents()}
+        {php unset($inputs['id'],$inputs['save'],$inputs['cancel'],$inputs['_do'])}
+        <div n:foreach="$inputs as $input" id="detail-{$input->getName()}" class="row padding-top-xs">
+            <div class="col-sm-3">
+                {label $input->getName()/}
+            </div>
+            <div class="col-sm-9">
+                {input $input->getName()}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 padding-bottom-xs padding-top-sm text-right">
+                {input cancel}
+                {input save}
+            </div>
+        </div>
+    {/form}
+</div>

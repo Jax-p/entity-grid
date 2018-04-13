@@ -1,0 +1,11 @@
+<nav aria-label="Page navigation" style="float: left; margin-right: 20px;" n:snippet="pp">
+	<ul n:class="pagination">
+            <li class="disabled"><a href="#">Položek na stránku:</a></li>
+		<li n:class="pagination-direction, $pp == $per ? active" n:foreach="['5','10','20','30','50'] as $per">
+			<a n:href="perPage!, $per" class="ajax">
+				<span aria-hidden="true" class="hidden-xs">{$per}</span>
+			</a>
+		</li>
+
+	</ul>
+</nav>
